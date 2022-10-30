@@ -4,9 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+<<<<<<< HEAD
+=======
+flask = "*"
+>>>>>>> bba9e0e5e64c7dd114f8b4d4a6fd42f5228b6b51
 marshmallow = "*"
 
 [dev-packages]
 
 [requires]
+<<<<<<< HEAD
 python_version = "3.11"
+=======
+python_version = "3.10"
+python_full_version = "3.10.5"
+>>>>>>> bba9e0e5e64c7dd114f8b4d4a6fd42f5228b6b51
