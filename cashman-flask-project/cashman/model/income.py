@@ -4,12 +4,12 @@ from .transaction import Transaction, TransactionSchema
 from .transaction_type import TransactionType
 
 
-class Income(Transaction):
+class Income(Transaction): #this class hardcodes the type of transaction
     def __init__(self, description, amount):
-        super(Income, self).__init__(description, amount, TransactionType.INCOME)
+        super().__init__(description, amount, TransactionType.INCOME)
 
     def __repr__(self):
-        return '<Income(name={self.description!r})>'.format(self=self)
+        return '<Income(name={self.description!r})>'.format(self=self)#format(value_to_change=value_passed)
 
 
 class IncomeSchema(TransactionSchema):
