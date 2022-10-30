@@ -3,7 +3,7 @@ import datetime as dt
 from marshmallow import Schema, fields
 
 
-class Transaction(object):
+class Transaction(object):#subclass of object
     def __init__(self, description, amount, type):
         self.description = description
         self.amount = amount
@@ -14,7 +14,7 @@ class Transaction(object):
         return '<Transaction(name={self.description!r})>'.format(self=self)
 
 
-class TransactionSchema(Schema):
+class TransactionSchema(Schema): #deserialize and serialize instances of Transaction from and to JSON objects
     description = fields.Str()
     amount = fields.Number()
     created_at = fields.Date()

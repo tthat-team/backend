@@ -25,7 +25,7 @@ def get_incomes():
 
 @app.route('/incomes', methods=['POST'])
 def add_income():
-    income = IncomeSchema().load(request.get_json()) #oad an instance of Income based on the JSON data sent by the user
+    income = IncomeSchema().load(request.get_json()) #load an instance of Income based on the JSON data sent by the user
     transactions.append(income) #added the new Income in transactions list
     return "", 204
     
