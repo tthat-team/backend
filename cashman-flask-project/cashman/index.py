@@ -1,0 +1,51 @@
+from flask import Flask, jsonify, request
+
+from cashman.model.expense import Expense, ExpenseSchema
+from cashman.model.income import Income, IncomeSchema
+from cashman.model.transaction_type import TransactionType
+
+app = Flask(__name__)
+
+transactions = [ #list of Expenses and Incomes
+    Income('Salary', 5000),
+    Income('Dividends', 200),
+    Expense('pizza', 50),
+    Expense('Rock Concert', 100)
+]
+
+
+@app.route('/incomes')
+def get_incomes():
+    schema = IncomeSchema(many=True) #IncomeSchema produces a JSON representation of incomes
+    incomes = schema.dump(
+        filter(lambda t: t.type == TransactionType.INCOME, transactions) #extract incomes only from the transactions list
+    )
+    return jsonify(incomes) #send the array of JSON incomes back to users
+
+
+@app.route('/incomes', methods=['POST'])
+def add_income():
+    income = IncomeSchema().load(request.get_json()) #oad an instance of Income based on the JSON data sent by the user
+    transactions.append(income) #added the new Income in transactions list
+    return "", 204
+    
+
+#these are almost the same as the income ones
+@app.route('/expenses')
+def get_expenses():
+    schema = ExpenseSchema(many=True)
+    expenses = schema.dump(
+        filter(lambda t: t.type == TransactionType.EXPENSE, transactions)
+    )
+    return jsonify(expenses)
+
+
+@app.route('/expenses', methods=['POST'])
+def add_expense():
+    expense = ExpenseSchema().load(request.get_json())
+    transactions.append(expense)
+    return "", 204
+
+
+if __name__ == "__main__":
+    app.run()
