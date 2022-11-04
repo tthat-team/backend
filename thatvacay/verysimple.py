@@ -17,3 +17,4 @@ def add_transaction():
     transactions.append(request.get_json())
     return '', 204
     
+app.run(debug = True, port = 8080)
