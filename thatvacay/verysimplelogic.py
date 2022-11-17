@@ -22,19 +22,17 @@ def get_transactions():
 def get_balances():
     return jsonify(balances)
 
-@app.route('/transaction', methods=['POST'])
+@app.route('/transactions', methods=['POST'])
 def add_transaction():
     newtransaction = request.get_json()
     transactions.append(newtransaction)
     #add transfer amt to first person balance and minus from second
-   for i in range(len(balances)):
+    for i in range(len(balances)):
         if balances[i]["Name"] == newtransaction["From"]:
-           balances[i]["Balance"] = balances[i]["Balance"] + newtransaction["Amount"]
+            balances[i]["Balance"] = balances[i]["Balance"] + newtransaction["Amount"]
 
         if balances[i]["Name"] == newtransaction["To"]:
             balances[i]["Balance"] = balances[i]["Balance"] - newtransaction["Amount"]
     return '', 204
-
-
     
 app.run(debug = True, port = 8080)
