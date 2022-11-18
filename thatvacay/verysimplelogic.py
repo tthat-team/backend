@@ -36,9 +36,9 @@ def add_transaction():
     calculate_balances(newtransaction)
     return '', 204
 
-@app.route('/optimizedroutes', methods=['POST'])
+@app.route('/optimizedroutes')
 def get_optimizedroutes():
-    optmize_route()
+    optimize_route()
     return jsonify(optimized_routes)
 
 def calculate_balances(newtransaction): #add transfer amt to first person balance and minus from second
