@@ -5,7 +5,13 @@ app = Flask(__name__)
 CORS(app)
 
 transactions = [
-    {'Addy': 30, 'Julia': -50, 'Sherry' : 20}
+    {'From':"Julia", "To":"Sherry",'Amount':30}
+]
+
+balance = [
+    {'Name': 'Julia', 'Balance': -50},
+    {'Name': 'Sherry', 'Balance': 30},
+    {'Name': 'Addy', 'Balance': 20}
 ]
 
 @app.route('/transactions')
@@ -17,5 +23,8 @@ def get_transactions():
 def add_transaction():
     transactions.append(request.get_json())
     return '', 204
+
+
+
     
 app.run(debug = True, port = 8080)
