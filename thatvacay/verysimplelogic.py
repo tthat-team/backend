@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import operator
+from operator import itemgetter
 
 app = Flask(__name__)
 CORS(app)
@@ -84,5 +84,5 @@ def optimize_route():
             if debtors[j]["Balance"] != 0: j-=1
             if creditors[i]["Balance"] != 0: i-=1
 
-            
+
 app.run(debug = True, port = 8080)
