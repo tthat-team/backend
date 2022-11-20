@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from operator import itemgetter
 
+print("hello")
+
 app = Flask(__name__)
 CORS(app)
 
@@ -18,7 +20,6 @@ balances = [
 optimized_routes = [
     #{'From':"Julia", "To":"Sherry",'Amount':30}
 ]
-
 
 
 @app.route('/transactions')
@@ -40,6 +41,11 @@ def add_transaction():
 def get_optimizedroutes():
     optimize_route()
     return jsonify(optimized_routes)
+
+@app.route('/splitcosts')
+def split_costs():
+    split_costs()
+    return jsonify(split_costs)
 
 def calculate_balances(newtransaction): #add transfer amt to first person balance and minus from second
     sender_exists = False
@@ -84,5 +90,13 @@ def optimize_route():
             if debtors[j]["Balance"] != 0: j-=1
             if creditors[i]["Balance"] != 0: i-=1
 
+def split_costs(transactor, totalCost): #split the costs of a transaction with everyone in the group
+    amtOwed = totalCost/(len(balances))
+
+    for i in range(len(balances)):
+        if(balances[i]["Name"] == transactor): # if the person is the transactor
+            balances[i]["Balances"] = balances[i]["Balances"]+(totalCost-amtOwed) #add to the amount owed less their own portion
+        else: 
+            balances[i]["Balance"] -= amtOwed
 
 app.run(debug = True, port = 8080)
