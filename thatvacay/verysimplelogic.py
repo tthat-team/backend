@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from operator import itemgetter
 
+print("hello")
+
 app = Flask(__name__)
 CORS(app)
 
@@ -19,7 +21,9 @@ optimized_routes = [
     #{'From':"Julia", "To":"Sherry",'Amount':30}
 ]
 
-
+spendings = [
+    {"Name":"Pooo", "Amount":30}
+]
 
 @app.route('/transactions')
 def get_transactions():
@@ -31,15 +35,22 @@ def get_balances():
 
 @app.route('/transactions', methods=['POST'])
 def add_transaction():
-    newtransaction = request.get_json()
-    transactions.append(newtransaction)
-    calculate_balances(newtransaction)
+    new_transaction = request.get_json()
+    transactions.append(new_transaction)
+    calculate_balances(new_transaction)
     return '', 204
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
     optimize_route()
     return jsonify(optimized_routes)
+
+@app.route('/spendings', methods=['POST'])
+def add_spending():
+    new_spending= request.get_json()
+    spendings.append(new_spending)
+    split_costs(new_spending["Name"], new_spending["Amount"])
+    return '', 205
 
 def calculate_balances(newtransaction): #add transfer amt to first person balance and minus from second
     sender_exists = False
@@ -59,7 +70,8 @@ def calculate_balances(newtransaction): #add transfer amt to first person balanc
     if receiver_exists == False:
         balances.append({'Name': newtransaction["To"], 'Balance': -newtransaction["Amount"]})
 
-def optimize_route():
+# optimize_route() adds transactions with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
+def optimize_route(): 
     sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True)
     creditors = []
     debtors = []
@@ -85,5 +97,18 @@ def optimize_route():
         if debtors[j]["Balance"]  == 0: j+=1
         if creditors[i]["Balance"] == 0: i+=1
 
+def split_costs(transactor, totalCost): #split the costs of a transaction with everyone in the group
+    amtOwed = totalCost/(len(balances))
+    transactor_exists = False
+
+    for i in range(len(balances)):
+        if (balances[i]["Name"] == transactor): # if the person is the transactor
+            transactor_exists = True
+            balances[i]["Balances"] = balances[i]["Balances"]+(totalCost-amtOwed) #add to the amount owed less their own portion
+        else: 
+            balances[i]["Balance"] -= amtOwed
+        
+    if not transactor_exists:
+            balances.append({'Name': transactor, 'Balance': totalCost-amtOwed})    
 
 app.run(debug = True, port = 8080)
