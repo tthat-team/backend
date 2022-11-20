@@ -72,17 +72,18 @@ def optimize_route():
     
     debtors = debtors[::-1]
 
-    for i in range(len(creditors)):
-        for j in range(len(debtors)):
-            amount = min(creditors[i]["Balance"],abs(debtors[j]["Balance"]))
-            new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
-            optimized_routes.append(new_route)
+    i=0
+    j=0
+    while i < min(len(creditors),len(debtors)) or j< min(len(creditors),len(debtors)):
+        amount = min(creditors[i]["Balance"], abs(debtors[j]["Balance"]))
+        new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
+        optimized_routes.append(new_route)
 
-            debtors[j]["Balance"] += amount
-            creditors[i]["Balance"] -= amount
+        debtors[j]["Balance"] += amount
+        creditors[i]["Balance"] -= amount
 
-            if debtors[j]["Balance"] != 0: j-=1
-            if creditors[i]["Balance"] != 0: i-=1
+        if debtors[j]["Balance"]  == 0: j+=1
+        if creditors[i]["Balance"] == 0: i+=1
 
 
 app.run(debug = True, port = 8080)
