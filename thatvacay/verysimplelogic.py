@@ -38,7 +38,7 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
-    balances.append({'Name': new_user, 'Balance': 0})
+    balances.append({'Name': new_user["Name"], 'Balance': 0})
     return '', 203
 
 
