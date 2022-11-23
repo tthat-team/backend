@@ -69,7 +69,7 @@ def add_spending():
     new_spending= request.get_json()
     spendings.append(new_spending)
     transactions.append(new_spending)
-    update_balances_spending(new_spending["Name"], new_spending["Amount"])
+    update_balances_spending(new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
 
