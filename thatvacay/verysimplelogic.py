@@ -47,7 +47,6 @@ def get_transactions():
     return jsonify(transactions)
 
 
-
 @app.route('/transfers')
 def get_transfers():
     return jsonify(transfers) #send the array of JSON incomes back to frontend
@@ -61,7 +60,10 @@ def add_transfer():
     return '', 204
 
 
-
+@app.route('/spendings')
+def get_spendings():
+    return jsonify(spendings) 
+    
 @app.route('/spendings', methods=['POST'])
 def add_spending():
     new_spending= request.get_json()
