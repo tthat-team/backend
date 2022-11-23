@@ -31,8 +31,8 @@ transactions = [ #combo of spendings and transfers
 @app.route('/users')
 def get_users():
     users = []
-    for i in range (len(balances)):
-        users.append(balances["Name"])
+    for i in range(len(balances)):
+        users.append(balances[i]["Name"])
     return jsonify(users)
 
 @app.route('/users', methods=['POST'])
@@ -57,7 +57,7 @@ def add_transfer():
     new_transfer = request.get_json()
     transfers.append(new_transfer)
     transactions.append(new_transfer)
-    calculate_balances(new_transfer)
+    update_balances_transfer(new_transfer)
     return '', 204
 
 
@@ -67,7 +67,7 @@ def add_spending():
     new_spending= request.get_json()
     spendings.append(new_spending)
     transactions.append(new_spending)
-    split_costs(new_spending["Name"], new_spending["Amount"])
+    update_balances_spending(new_spending["Name"], new_spending["Amount"])
     return '', 205
 
 
@@ -86,7 +86,7 @@ def get_optimizedroutes():
 
 
 
-def calculate_balances(newtransfer): #add transfer amt to first person balance and minus from second
+def update_balances_transfer(newtransfer): #add transfer amt to first person balance and minus from second
     sender_exists = False
     receiver_exists = False
     for i in range(len(balances)):
@@ -134,7 +134,7 @@ def optimize_route():
 
 
 
-def split_costs(transactor, totalCost): #split the costs of a transfer with everyone in the group
+def update_balances_spending(transactor, totalCost): #split the costs of a transfer with everyone in the group
     transactor_exists = False
     for i in range(len(balances)):
         if (balances[i]["Name"] == transactor): transactor_exists = True
