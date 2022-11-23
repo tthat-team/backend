@@ -35,7 +35,7 @@ def get_users():
         users.append(balances["Name"])
     return jsonify(users)
 
-@app.route('/users', method=['POST'])
+@app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
     balances.append({'Name': new_user, 'Balance': 0})
@@ -86,7 +86,6 @@ def get_optimizedroutes():
 
 
 
-
 def calculate_balances(newtransfer): #add transfer amt to first person balance and minus from second
     sender_exists = False
     receiver_exists = False
@@ -104,6 +103,7 @@ def calculate_balances(newtransfer): #add transfer amt to first person balance a
 
     if receiver_exists == False:
         balances.append({'Name': newtransfer["To"], 'Balance': -newtransfer["Amount"]})
+
 
 # optimize_route() adds transfers with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
 def optimize_route(): 
@@ -132,6 +132,8 @@ def optimize_route():
         if debtors[j]["Balance"]  == 0: j+=1
         if creditors[i]["Balance"] == 0: i+=1
 
+
+
 def split_costs(transactor, totalCost): #split the costs of a transfer with everyone in the group
     transactor_exists = False
     for i in range(len(balances)):
@@ -143,10 +145,9 @@ def split_costs(transactor, totalCost): #split the costs of a transfer with ever
 
     for i in range(len(balances)):
         if (balances[i]["Name"] == transactor): # if the person is the transactor
-            balances[i]["Balances"] = balances[i]["Balances"] + (totalCost - amtOwed) #add to the amount owed less their own portion
+            balances[i]["Balance"] = balances[i]["Balance"] + (totalCost - amtOwed) #add to the amount owed less their own portion
         else: 
-            balances[i]["Balance"] -= amtOwed
-
+            balances[i]["Balance"] = balances[i]["Balance"] - amtOwed
 
 
 app.run(debug = True, port = 8080)
