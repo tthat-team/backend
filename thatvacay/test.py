@@ -2,16 +2,15 @@ from operator import itemgetter
 
 balances = [
     {'Name': 'Julia', 'Balance': 50},
-    {'Name': 'Sherry', 'Balance': -10},
-    {'Name': 'Addy', 'Balance': 20},
-    {'Name': 'Frank', 'Balance': -60}
+    {'Name': 'Sherry', 'Balance': 0},
+    {'Name': 'asd', 'Balance': -50}
 ]
 
 optimized_routes = [
     #{'From':"Julia", "To":"Sherry",'Amount':30}
 ]
 
-def optimize_route():
+def optimize_route(): 
     sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True)
     creditors = []
     debtors = []
@@ -23,12 +22,18 @@ def optimize_route():
             debtors.append(sorted_balances[i])
     
     debtors = debtors[::-1]
-    
+
+    print(creditors,debtors)
+
     i=0
     j=0
     while i < min(len(creditors),len(debtors)) or j< min(len(creditors),len(debtors)):
         amount = min(creditors[i]["Balance"], abs(debtors[j]["Balance"]))
-        new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
+        new_route = 0
+        if len(creditors) == len(debtors):
+            new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': 2*amount}
+        else:
+            new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
         optimized_routes.append(new_route)
 
         debtors[j]["Balance"] += amount
