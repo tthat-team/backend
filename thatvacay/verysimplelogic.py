@@ -2,19 +2,17 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from operator import itemgetter
 
-print("hello")
-
 app = Flask(__name__)
 CORS(app)
 
-transactions = [
+transfers = [
     #{'From':"Julia", "To":"Sherry",'Amount':30}
 ]
 
 balances = [
-    {'Name': 'Julia', 'Balance': 50},
-    {'Name': 'Sherry', 'Balance': -30},
-    {'Name': 'Addy', 'Balance': -20}
+   # {'Name': 'Julia', 'Balance': 50},
+   # {'Name': 'Sherry', 'Balance': -30},
+   # {'Name': 'Addy', 'Balance': -20}
 ]
 
 optimized_routes = [
@@ -22,55 +20,92 @@ optimized_routes = [
 ]
 
 spendings = [
-    {"Name":"Pooo", "Amount":30}
+    #{"Name":"Pooo", "Amount":30}
 ]
+
+transactions = [ #combo of spendings and transfers
+
+]
+
+
+@app.route('/users')
+def get_users():
+    users = []
+    for i in range (len(balances)):
+        users.append(balances["Name"])
+    return jsonify(users)
+
+@app.route('/users', method=['POST'])
+def add_user():
+    new_user = request.get_json()
+    balances.append({'Name': new_user, 'Balance': 0})
+    return '', 203
+
 
 @app.route('/transactions')
 def get_transactions():
-    return jsonify(transactions) #send the array of JSON incomes back to users
+    return jsonify(transactions)
+
+
+
+@app.route('/transfers')
+def get_transfers():
+    return jsonify(transfers) #send the array of JSON incomes back to frontend
+
+@app.route('/transfers', methods=['POST'])
+def add_transfer():
+    new_transfer = request.get_json()
+    transfers.append(new_transfer)
+    transactions.append(new_transfer)
+    calculate_balances(new_transfer)
+    return '', 204
+
+
+
+@app.route('/spendings', methods=['POST'])
+def add_spending():
+    new_spending= request.get_json()
+    spendings.append(new_spending)
+    transactions.append(new_spending)
+    split_costs(new_spending["Name"], new_spending["Amount"])
+    return '', 205
+
+
+
 
 @app.route('/balances')
 def get_balances():
     return jsonify(balances)
 
-@app.route('/transactions', methods=['POST'])
-def add_transaction():
-    new_transaction = request.get_json()
-    transactions.append(new_transaction)
-    calculate_balances(new_transaction)
-    return '', 204
+
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
     optimize_route()
     return jsonify(optimized_routes)
 
-@app.route('/spendings', methods=['POST'])
-def add_spending():
-    new_spending= request.get_json()
-    spendings.append(new_spending)
-    split_costs(new_spending["Name"], new_spending["Amount"])
-    return '', 205
 
-def calculate_balances(newtransaction): #add transfer amt to first person balance and minus from second
+
+
+def calculate_balances(newtransfer): #add transfer amt to first person balance and minus from second
     sender_exists = False
     receiver_exists = False
     for i in range(len(balances)):
-        if balances[i]["Name"] == newtransaction["From"]:
-            balances[i]["Balance"] = balances[i]["Balance"] + newtransaction["Amount"]
+        if balances[i]["Name"] == newtransfer["From"]:
+            balances[i]["Balance"] = balances[i]["Balance"] + newtransfer["Amount"]
             sender_exists = True
 
-        if balances[i]["Name"] == newtransaction["To"]:
-            balances[i]["Balance"] = balances[i]["Balance"] - newtransaction["Amount"]
+        if balances[i]["Name"] == newtransfer["To"]:
+            balances[i]["Balance"] = balances[i]["Balance"] - newtransfer["Amount"]
             receiver_exists = True
 
     if sender_exists == False: #theres def a better way to check if a value is in a dict
-        balances.append({'Name': newtransaction["From"], 'Balance': newtransaction["Amount"]})
+        balances.append({'Name': newtransfer["From"], 'Balance': newtransfer["Amount"]})
 
     if receiver_exists == False:
-        balances.append({'Name': newtransaction["To"], 'Balance': -newtransaction["Amount"]})
+        balances.append({'Name': newtransfer["To"], 'Balance': -newtransfer["Amount"]})
 
-# optimize_route() adds transactions with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
+# optimize_route() adds transfers with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
 def optimize_route(): 
     sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True)
     creditors = []
@@ -97,18 +132,21 @@ def optimize_route():
         if debtors[j]["Balance"]  == 0: j+=1
         if creditors[i]["Balance"] == 0: i+=1
 
-def split_costs(transactor, totalCost): #split the costs of a transaction with everyone in the group
-    amtOwed = totalCost/(len(balances))
+def split_costs(transactor, totalCost): #split the costs of a transfer with everyone in the group
     transactor_exists = False
+    for i in range(len(balances)):
+        if (balances[i]["Name"] == transactor): transactor_exists = True
+    if transactor_exists == False:
+        balances.append({'Name': transactor, 'Balance': 0}) 
+
+    amtOwed = totalCost/(len(balances))
 
     for i in range(len(balances)):
         if (balances[i]["Name"] == transactor): # if the person is the transactor
-            transactor_exists = True
-            balances[i]["Balances"] = balances[i]["Balances"]+(totalCost-amtOwed) #add to the amount owed less their own portion
+            balances[i]["Balances"] = balances[i]["Balances"] + (totalCost - amtOwed) #add to the amount owed less their own portion
         else: 
             balances[i]["Balance"] -= amtOwed
-        
-    if not transactor_exists:
-            balances.append({'Name': transactor, 'Balance': totalCost-amtOwed})    
+
+
 
 app.run(debug = True, port = 8080)
