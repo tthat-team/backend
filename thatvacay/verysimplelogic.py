@@ -15,10 +15,6 @@ balances = [
    # {'Name': 'Addy', 'Balance': -20}
 ]
 
-optimized_routes = [
-    #{'From':"Julia", "To":"Sherry",'Amount':30}
-]
-
 spendings = [
     #{"Name":"Pooo", "Amount":30}
 ]
@@ -83,8 +79,7 @@ def get_balances():
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
-    optimize_route()
-    return jsonify(optimized_routes)
+    return jsonify(optimize_route())
 
 
 
@@ -109,7 +104,9 @@ def update_balances_transfer(newtransfer): #add transfer amt to first person bal
 
 # optimize_route() adds transfers with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
 def optimize_route(): 
-    sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True)
+    optimized_routes = []
+    copy_balances = [{'Name': x["Name"], 'Balance': x["Balance"]} for x in balances]
+    sorted_balances = sorted(copy_balances, key=itemgetter("Balance"), reverse=True)
     creditors = []
     debtors = []
 
@@ -137,6 +134,8 @@ def optimize_route():
 
         if debtors[j]["Balance"]  == 0: j+=1
         if creditors[i]["Balance"] == 0: i+=1
+
+    return optimized_routes
 
 
 
