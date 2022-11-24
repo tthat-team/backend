@@ -1,9 +1,18 @@
 from operator import itemgetter
 
 balances = [
-    {'Name': 'Julia', 'Balance': 50},
-    {'Name': 'Sherry', 'Balance': 0},
-    {'Name': 'asd', 'Balance': -50}
+    {
+        "Balance": 33.33333333333333,
+        "Name": "Julia"
+    },
+    {
+        "Balance": -36.66666666666667,
+        "Name": "Sherry"
+    },
+    {
+        "Balance": 3.333333333333332,
+        "Name": "Adeline"
+    }
 ]
 
 optimized_routes = [
@@ -11,7 +20,7 @@ optimized_routes = [
 ]
 
 def optimize_route(): 
-    sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True)
+    sorted_balances = sorted(balances, key=itemgetter("Balance"), reverse=True).copy()
     creditors = []
     debtors = []
 
@@ -23,14 +32,15 @@ def optimize_route():
     
     debtors = debtors[::-1]
 
-    print(creditors,debtors)
+    print("cred:",creditors,"debt:",debtors)
 
     i=0
     j=0
-    while i < min(len(creditors),len(debtors)) or j< min(len(creditors),len(debtors)):
+    #while i < min(len(creditors),len(debtors)) or j< min(len(creditors),len(debtors)):
+    while i < len(creditors) and j < len(debtors):
         amount = min(creditors[i]["Balance"], abs(debtors[j]["Balance"]))
         new_route = 0
-        if len(creditors) == len(debtors):
+        if len(creditors) == len(debtors) == 1:
             new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': 2*amount}
         else:
             new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
@@ -46,4 +56,4 @@ def optimize_route():
         #     optimized_routes.append({'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount})
 
 optimize_route()
-print(optimized_routes)
+print("routes:",optimized_routes)

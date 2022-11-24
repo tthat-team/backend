@@ -121,14 +121,12 @@ def optimize_route():
     
     debtors = debtors[::-1]
 
-    print(creditors,debtors)
-
     i=0
     j=0
-    while i < min(len(creditors),len(debtors)) or j< min(len(creditors),len(debtors)):
+    while i < len(creditors) and j < len(debtors):
         amount = min(creditors[i]["Balance"], abs(debtors[j]["Balance"]))
         new_route = 0
-        if len(creditors) == len(debtors):
+        if len(creditors) == len(debtors) == 1:
             new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': 2*amount}
         else:
             new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
@@ -156,6 +154,9 @@ def update_balances_spending(transactor, totalCost): #split the costs of a trans
             balances[i]["Balance"] = balances[i]["Balance"] + (totalCost - amtOwed) #add to the amount owed less their own portion
         else: 
             balances[i]["Balance"] = balances[i]["Balance"] - amtOwed
+    
+    if len(balances) == 1:
+        balances[0]["Balance"] = totalCost
 
 
 app.run(debug = True, port = 8080)
