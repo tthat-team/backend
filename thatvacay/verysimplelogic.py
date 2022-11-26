@@ -122,11 +122,7 @@ def optimize_route():
     j=0
     while i < len(creditors) and j < len(debtors):
         amount = min(creditors[i]["Balance"], abs(debtors[j]["Balance"]))
-        new_route = 0
-        if len(creditors) == len(debtors) == 1:
-            new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': 2*amount}
-        else:
-            new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
+        new_route = {'From':debtors[j]["Name"], "To":creditors[i]["Name"],'Amount': amount}
         optimized_routes.append(new_route)
 
         debtors[j]["Balance"] += amount
@@ -136,7 +132,6 @@ def optimize_route():
         if creditors[i]["Balance"] == 0: i+=1
 
     return optimized_routes
-
 
 
 def update_balances_spending(transactor, totalCost): #split the costs of a transfer with everyone in the group
@@ -155,7 +150,7 @@ def update_balances_spending(transactor, totalCost): #split the costs of a trans
             balances[i]["Balance"] = balances[i]["Balance"] - amtOwed
     
     if len(balances) == 1:
-        balances[0]["Balance"] = totalCost
+        balances[0]["Balance"] = 0 #alskdm
 
 
 app.run(debug = True, port = 8080)
