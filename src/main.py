@@ -1,12 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import optimize_routes, spendings, transfers
-from importlib import reload
-reload(optimize_routes)
-reload(spendings)
-reload(transfers)
+import optimize_routes as opt
+import spendings as spd
+import transfers as trans
 
-print(dir(optimize_routes))
 
 app = Flask(__name__)
 CORS(app)
@@ -56,7 +53,7 @@ def add_transfer():
     new_transfer = request.get_json()
     transfers.append(new_transfer)
     transactions.append(new_transfer)
-    balances = transfers.update_balances_transfer(balances,new_transfer)
+    trans.update_balances_transfer(balances,new_transfer)
     return '', 204
 
 @app.route('/spendings')
@@ -68,7 +65,7 @@ def add_spending():
     new_spending= request.get_json()
     spendings.append(new_spending)
     transactions.append(new_spending)
-    balances = spendings.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
+    spd.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
 
@@ -78,7 +75,7 @@ def get_balances():
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
-    return jsonify(optimize_routes.optimize_route())
+    return jsonify(opt.optimize_route())
 
 
 app.run(debug = True, port = 8080)
