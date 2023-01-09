@@ -1,8 +1,0 @@
-'''
-    for i in range(len(balances)):
-        if balances[i]["Name"] == newtransaction["From"]:
-           balances[i]["Balance"] = balances[i]["Balance"] + newtransaction["Amount"]
-
-        if balances[i]["Name"] == newtransaction["To"]:
-            balances[i]["Balance"] = balances[i]["Balance"] - newtransaction["Amount"]
-    '''
