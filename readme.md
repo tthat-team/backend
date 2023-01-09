@@ -1,1 +1,3 @@
-hi i'm a collaborator
+This is That-Vacay's backend logic. 
+
+Function descriptions:
