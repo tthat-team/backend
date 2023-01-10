@@ -29,6 +29,8 @@ transactions = [ #combo of spendings and transfers
 
 ]
 
+rate = ""
+
 
 @app.route('/users')
 def get_users():
@@ -71,6 +73,15 @@ def add_spending():
     balances = spendings.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
+@app.route('/exchange')
+def get_exchange_rates():
+    return jsonify(rate)
+
+@app.route('/exchange', methods=['POST'])
+def get_exchange_rate():
+    new_rate = request.get_json()
+    rate = get_exchange_rate()
+    return '', 206
 
 @app.route('/balances')
 def get_balances():
