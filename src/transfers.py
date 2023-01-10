@@ -1,5 +1,3 @@
-
-
 def update_balances_transfer(balances, newtransfer): #add transfer amt to first person balance and minus from second
     sender_exists = False
     receiver_exists = False
