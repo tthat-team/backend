@@ -3,6 +3,7 @@ from flask_cors import CORS
 import optimize_routes as opt
 import spendings as spd
 import transfers as trans
+import exchange as exc
 
 
 app = Flask(__name__)
@@ -26,7 +27,7 @@ transactions = [ #combo of spendings and transfers
 
 ]
 
-rate = ""
+current_currency = "CAD"
 
 
 @app.route('/users')
@@ -64,25 +65,22 @@ def get_spendings():
     
 @app.route('/spendings', methods=['POST'])
 def add_spending():
-    new_spending= request.get_json()
+    new_spending = request.get_json()
     spendings.append(new_spending)
     transactions.append(new_spending)
     spd.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
-@app.route('/exchange')
-def get_exchange_rates():
-    return jsonify(rate)
-
 @app.route('/exchange', methods=['POST'])
 def get_exchange_rate():
-    new_rate = request.get_json()
-    rate = get_exchange_rate()
+    new_currency = request.get_json()
+    exc.change_global_currency(current_currency, new_currency["Currency"], balances)
+    current_currency = new_currency["Currency"]
     return '', 206
 
 @app.route('/balances')
 def get_balances():
-    return jsonify(balances)
+    return jsonify(exc.change_global_currency(balances))
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
