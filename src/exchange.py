@@ -18,5 +18,11 @@ def get_exchange_rate(base_currency, ex_currency):
 
 print(get_exchange_rate("USD","CAD"))
 
-    
+def change_global_currency(base_currency, ex_currency, array):
+    rate = get_exchange_rate(base_currency, ex_currency)
+    for x in array:
+        x["Balance"] = x["Balance"]*rate
 
+def convert_currency(base_currency, ex_currency, amount):
+    rate = get_exchange_rate(base_currency, ex_currency)
+    amount = amount*rate
