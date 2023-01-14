@@ -28,6 +28,7 @@ transactions = [ #combo of spendings and transfers
 ]
 
 current_currency = ["CAD"]
+userexists = ""
 
 @app.route('/users')
 def get_users():
@@ -39,11 +40,21 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
-    balances.append({'Name': new_user["Name"], 'Balance': 0})
+    for i in range(len(balances)): 
+        if balances[i]["Name"] == new_user["Name"]:
+            global user_exists 
+            user_exists = 'user already exists'  
+    else:
+        balances.append({'Name': new_user["Name"], 'Balance': 0})
     return '', 203
+
+@app.route('/addusererror')
+def get_users():
+    return jsonify(userexists)
 
 @app.route('/transactions')
 def get_transactions():
+    #rounded_trans = 
     return jsonify(transactions)
 
 @app.route('/transfers')
