@@ -14,9 +14,9 @@ transfers = [
 ]
 
 balances = [
-   # {'Name': 'Julia', 'Balance': 50},
-   # {'Name': 'Sherry', 'Balance': -30},
-   # {'Name': 'Addy', 'Balance': -20}
+   {'Name': 'Julia', 'Balance': 50},
+   {'Name': 'Sherry', 'Balance': -30},
+   {'Name': 'Addy', 'Balance': -20}
 ]
 
 spendings = [
@@ -27,8 +27,7 @@ transactions = [ #combo of spendings and transfers
 
 ]
 
-current_currency = "CAD"
-
+current_currency = ["CAD"]
 
 @app.route('/users')
 def get_users():
@@ -71,20 +70,25 @@ def add_spending():
     spd.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
+@app.route('/exchange')
+def get_exchange():
+    return jsonify(balances)
+
 @app.route('/exchange', methods=['POST'])
-def get_exchange_rate():
+def add_exchange_rate():
     new_currency = request.get_json()
-    exc.change_global_currency(current_currency, new_currency["Currency"], balances)
-    current_currency = new_currency["Currency"]
+    exc.change_global_currency(current_currency[0], new_currency["Currency"], balances)
+    current_currency[0] = new_currency["Currency"]
+
     return '', 206
 
 @app.route('/balances')
 def get_balances():
-    return jsonify(exc.change_global_currency(balances))
+    return jsonify(balances)
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
-    return jsonify(opt.optimize_route())
+    return jsonify(opt.optimize_route(balances))
 
 
 app.run(debug = True, port = 8080)
