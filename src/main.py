@@ -70,16 +70,11 @@ def add_spending():
     spd.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
-@app.route('/exchange')
-def get_exchange():
-    return jsonify(balances)
-
 @app.route('/exchange', methods=['POST'])
 def add_exchange_rate():
     new_currency = request.get_json()
     exc.change_global_currency(current_currency[0], new_currency["Currency"], balances)
     current_currency[0] = new_currency["Currency"]
-
     return '', 206
 
 @app.route('/balances')
