@@ -4,6 +4,7 @@ import optimize_routes as opt
 import spendings as spd
 import transfers as trans
 import exchange as exc
+import round as rnd
 
 
 app = Flask(__name__)
@@ -14,9 +15,9 @@ transfers = [
 ]
 
 balances = [
-   {'Name': 'Julia', 'Balance': 50},
-   {'Name': 'Sherry', 'Balance': -30},
-   {'Name': 'Addy', 'Balance': -20}
+   #{'Name': 'Julia', 'Balance': 50},
+   #{'Name': 'Sherry', 'Balance': -30},
+   #{'Name': 'Addy', 'Balance': -20}
 ]
 
 spendings = [
@@ -44,10 +45,12 @@ def add_user():
 
 @app.route('/transactions')
 def get_transactions():
+    rnd.round_cash_json(transactions, "Amount")
     return jsonify(transactions)
 
 @app.route('/transfers')
 def get_transfers():
+    rnd.round_cash_json(transfers, "Amount")
     return jsonify(transfers) #send the array of JSON incomes back to frontend
 
 @app.route('/transfers', methods=['POST'])
@@ -60,6 +63,7 @@ def add_transfer():
 
 @app.route('/spendings')
 def get_spendings():
+    rnd.round_cash_json(spendings, "Amount")
     return jsonify(spendings) 
     
 @app.route('/spendings', methods=['POST'])
@@ -79,11 +83,12 @@ def add_exchange_rate():
 
 @app.route('/balances')
 def get_balances():
+    rnd.round_cash_json(balances, "Balance")
     return jsonify(balances)
 
 @app.route('/optimizedroutes')
 def get_optimizedroutes():
-    return jsonify(opt.optimize_route(balances))
+    return jsonify(rnd.round_cash_json(opt.optimize_route(balances)), "Balance")
 
 
 app.run(debug = True, port = 8080)
