@@ -3,7 +3,7 @@ from flask_cors import CORS
 import optimize_routes as opt
 import spendings as spd
 import transfers as trans
-# import exchange as exc
+import exchange as exc
 
 
 app = Flask(__name__)
@@ -39,15 +39,8 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
-    userexists = False
-    for i in range(len(balances)): 
-        if balances[i]["Name"] == new_user["Name"]:
-            userexists=True
-    if userexists:
-        return 'user already exists'
-    else:
-        balances.append({'Name': new_user["Name"], 'Balance': 0})
-        return '', 203
+    balances.append({'Name': new_user["Name"], 'Balance': 0})
+    return '', 203
 
 @app.route('/transactions')
 def get_transactions():
@@ -77,11 +70,16 @@ def add_spending():
     spd.update_balances_spending(balances, new_spending["Name"], float(new_spending["Amount"]))
     return '', 205
 
+@app.route('/exchange')
+def get_exchange():
+    return jsonify(balances)
+
 @app.route('/exchange', methods=['POST'])
-def get_exchange_rate():
+def add_exchange_rate():
     new_currency = request.get_json()
-    exc.change_global_currency(current_currency, new_currency["Currency"], balances)
-    current_currency = new_currency["Currency"]
+    exc.change_global_currency(current_currency[0], new_currency["Currency"], balances)
+    current_currency[0] = new_currency["Currency"]
+
     return '', 206
 
 @app.route('/balances')
