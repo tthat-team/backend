@@ -40,8 +40,15 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
-    balances.append({'Name': new_user["Name"], 'Balance': 0})
-    return '', 203
+    userexists = False
+    for i in range(len(balances)): 
+        if balances[i]["Name"] == new_user["Name"]:
+            userexists=True
+    if userexists:
+        return 'user already exists'
+    else:
+        balances.append({'Name': new_user["Name"], 'Balance': 0})
+        return '', 203
 
 @app.route('/transactions')
 def get_transactions():
