@@ -1,7 +1,7 @@
 from operator import itemgetter
 
 # optimize_route() adds transfers with the format {'From': NAME1, "To": NAME2,'Amount': Num} to optimized_routes
-def optimize_route(): 
+def optimize_route(balances):
     optimized_routes = []
     copy_balances = [{'Name': x["Name"], 'Balance': x["Balance"]} for x in balances]
     sorted_balances = sorted(copy_balances, key=itemgetter("Balance"), reverse=True)
